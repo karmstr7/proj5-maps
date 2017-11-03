@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+        <meta charset="utf-8">
+        <title>Project 5: A Map App</title>
+        <style>
+          /* Always set the map height explicitly to define the size of the div
+           * element that contains the map. */
+          #map {
+            height: 100%;
+          }
+          /* Optional: Makes the sample page fill the window. */
+          html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+          }
+        </style>
+
+    </head>
+  <body>
+    <div id="map"></div>
+    <script>
+        const default_coords = convert_to_list('{{g.default_coords}}');
+        const poi = convert_to_dict('{{g.pois}}');
+
+        function initMap() {
+        let myLatLng = {lat: default_coords[0], lng: default_coords[1]};
+        let map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 13,
+          center: myLatLng
+        });
+
+        let geocoder = new google.maps.Geocoder;
+        let infowindow = new google.maps.InfoWindow;
+        let marker = new google.maps.Marker({
+            map: map
+        });
+
+        map.addListener('click', function(e){
+            marker.setPosition(e.latLng);
+            geocodeLatLng(geocoder, map, marker, infowindow, e);
+        });
+
+        generatePois(geocoder, map);
+        }
+
+        // Convert a set of coordinates into street address.
+        function geocodeLatLng(geocoder, map, marker, infowindow, e, optional="") {
+            geocoder.geocode({'location':e.latLng || e}, function (results, status) {
+                if (status === 'OK') {
+                    console.log("RECEIVED STATUS: " + status);
+                    if (results[0]) {
+                        console.log("RESULTS FROM GOOGLE API REQUEST: " + results[0]);
+                        infowindow.setContent("<div>" + optional + "</div>" +
+                                              "<div>" + results[0].formatted_address +"</div>");
+                        infowindow.open(map, marker);
+                    } else {
+                        infowindow.setContent('No results found');
+                    }
+                } else {
+                    infowindow.setContent('Geocoder failed due to: ' + status);
+                }
+            })
+        }
+
+        // Makes pins for the uploaded addresses.
+        function generatePois(geocoder, map) {
+            for (let key in poi) {
+                if (poi.hasOwnProperty(key)) {
+                    let coord = {lat: poi[key][0], lng: poi[key][1]};
+                    let infowindow = new google.maps.InfoWindow;
+                    let marker = new google.maps.Marker({
+                        map: map,
+                        position: coord,
+                        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+                    });
+                    geocodeLatLng(geocoder, map, marker, infowindow, coord, key);
+                    marker.addListener('click', function () {
+                        infowindow.open(map,marker);
+                    });
+                }
+            }
+        }
+        // Convert a "[1,2,3]" into [1,2,3]
+        function convert_to_list(string_list) {
+            return array = string_list.split(", ").map(Number);
+        }
+
+        // Convert a "['a', '1.00', '2.00']" into {'a': [1.00, 2.00]}
+        function convert_to_dict(string_list) {
+            let dict = {};
+            let array = string_list.split(", ");
+            for (i = 0; i < array.length; i++) {
+                if (isNaN(array[i]) === true) {
+                    if (array[i+1] !== null && array[i+2] !== null){
+                        dict[array[i]] = [parseFloat(array[i+1]), parseFloat(array[i+2])];
+                        i = i + 2;
+                    }
+                }
+            }
+            console.log(dict);
+            return dict;
+        }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key={{g.map_key}}&callback=initMap">
+    </script>
+  </body>
+</html>
