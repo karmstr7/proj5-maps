@@ -6,12 +6,14 @@ Replacement for RUSA ACP brevet time calculator
 
 import flask
 import config
+import pre
 
 import logging
 
 ###
 # Globals
 ###
+
 app = flask.Flask(__name__)
 CONFIG = config.configuration()
 app.secret_key = CONFIG.SECRET_KEY
@@ -28,7 +30,8 @@ def index():
     app.logger.debug("Main page entry")
     flask.g.map_key = app.map_key
     flask.g.default_coords = app.default_coords
-    return flask.render_template('index.html')
+    flask.g.pois = pre.process(open(CONFIG.POIS, encoding="utf-8"))
+    return flask.render_template('index.html', )
 
 
 @app.errorhandler(404)

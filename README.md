@@ -1,13 +1,14 @@
-Author: Michal Young
-<br />Edited By: Keir Armstrong
+Author: Keir Armstrong
 
 **Description:**
 <br />
-This a website powered by Flask and Ajax.
-The website generates forms that ask for brevet controls points
-in a brevet race between 200km to 1000km long. User enters a control
-point and gets the opening time and closing time of that particular control point
-based on the ACP standard.
+A map app that implements Google Maps APIs.
+Provides all the basic functions that come with 
+Google Maps. Additional features include pinning 
+various point of interests (POI) on the map, these POIs
+are extracted data from an external file. The pins on the map 
+are described about their locations by bubbles. 
+
 
 CIS 322 |
 University of Oregon |

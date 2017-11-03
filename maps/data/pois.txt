@@ -1,0 +1,6 @@
+# The list of locations below will be fed into the map app.
+# The individuals locations will be marked on the map by a pin.
+
+Description: Eugene Public Library    Latitude: 44.04853019999999    Longitude: -123.09496200000001
+Description: Vietnam Restaurant    Latitude: 44.0481371    Longitude: -123.12864430000002
+Description: Arriving by Bike    Latitude: 44.0288218    Longitude: -123.09029629999998
